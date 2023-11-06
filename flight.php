@@ -5,7 +5,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('availFlight.jpeg');
+            background-image: url('availablrflights.jpg');
             background-size: cover;
             background-attachment: fixed;
             background-color: #f0f0f0;
