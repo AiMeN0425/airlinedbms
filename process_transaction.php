@@ -1,31 +1,64 @@
 <?php
+session_start(); // Start the session if not already started
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Include your database connection code (db_connect.php) here
-    include 'db_connect.php';
+    // Check if the required POST parameters are set
+    if (
+        isset($_POST["transaction_type"]) &&
+        isset($_POST["charged_amount"]) &&
+        isset($_POST["flight_id"])
+    ) {
+        // Get the payment method, charged amount, and flight ID from the form
+        $payment_method = $_POST["transaction_type"];
+        $charged_amount = $_POST["charged_amount"];
+        $flight_id = $_POST["flight_id"];
 
-    $transaction_type = $_POST["transaction_type"];
-    $departure_date = $_POST["departure_date"];
-    $booking_date = $_POST["booking_date"];
-    $charged_amount = $_POST["charged_amount"];
-    $passenger_id = $_POST["passenger_id"];
-    $flight_id = $_POST["flight_id"];
-    $seat_class = $_POST["seat_class"];
+        // Create a database connection (include your db_connect.php)
+        include 'db_connect.php';
 
-    // Perform database insertion to add a new transaction
-    // Write and execute the SQL query to insert the transaction data into the Transaction table
-    $sql = "INSERT INTO Transaction (Ts_type, Departure_date, Booking_date, Charged_amount, P_ID, Flight_ID, Class) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Query the Flight table to retrieve the departure date (flight_date) for the selected flight
+        $sql_flight = "SELECT flight_date FROM Flight WHERE Flight_ID = ?";
+        $stmt_flight = $conn->prepare($sql_flight);
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssiiis", $transaction_type, $departure_date, $booking_date, $charged_amount, $passenger_id, $flight_id, $seat_class);
+        if ($stmt_flight) {
+            $stmt_flight->bind_param("s", $flight_id);
+            $stmt_flight->execute();
+            $stmt_flight->bind_result($departure_date); // Use departure_date as the variable to store flight_date
+            $stmt_flight->fetch();
+            $stmt_flight->close();
 
-    if ($stmt->execute()) {
-        // Transaction added successfully
-        header("Location: transaction.php?success=1");
-        exit;
+            // Insert the transaction details into the Transaction table with the retrieved departure date
+            $sql = "INSERT INTO Transaction (Ts_type, Departure_date, Booking_date, Charged_amount, Flight_ID)
+                    VALUES (?, ?, NOW(), ?, ?)";
+            $stmt = $conn->prepare($sql);
+
+            if ($stmt) {
+                // Bind the parameters and execute the query
+                $stmt->bind_param("ssds", $payment_method, $departure_date, $charged_amount, $flight_id);
+
+                if ($stmt->execute()) {
+                    echo '<script>alert("Payment successful. Thank you for booking your flight!"); window.location.href = "home.php"; </script>';
+                } else {
+                    echo '<script>alert("Payment failed. Please try again later.");</script>';
+                }
+
+                // Close the prepared statement
+                $stmt->close();
+            } else {
+                echo '<script>alert("Error in preparing the SQL statement for Transaction.");</script>';
+            }
+        } else {
+            echo '<script>alert("Error in preparing the SQL statement for Flight.");</script>';
+        }
+
+        // Close the database connection
+        $conn->close();
     } else {
-        // Error occurred during insertion
-        header("Location: transaction.php?error=1");
-        exit;
+        echo '<script>alert("Incomplete POST data. Please fill out the form completely.");</script>';
     }
+} else {
+    echo '<script>alert("Invalid request. Please submit the form.");</script>';
 }
+
+
 ?>
