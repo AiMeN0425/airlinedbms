@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +6,7 @@
 </head>
 <body>
     <h2>Flight Reservation</h2>
-    <form action="flight.php" method="POST">
+    <!-- <form action="flight.php" method="POST">
         <label for="departure">Departure:</label>
         <select name="departure" required>
             <?php
@@ -39,8 +40,6 @@
             ?>
         </select><br><br>
         
-        <label for="time">Time:</label>
-        <input type="time" name="time" required><br><br>
         
         <label for="date">Date:</label>
         <input type="date" name="date" required><br><br>
@@ -61,8 +60,49 @@
         </select><br><br>
         
         <input type="submit" value="Search Flights">
-    </form>
+    </form> -->
     
+    <form action="flight_search.php" method="POST">
+    <label for="departure">Departure:</label>
+    <select name="departure" required>
+        <?php
+        // Connect to the database (You can include your db_connect.php here)
+        include 'db_connect.php';
+        
+        // Fetch unique departure locations from the Route table
+        $sql = "SELECT DISTINCT Departure FROM Route";
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<option value='{$row['Departure']}'>{$row['Departure']}</option>";
+            }
+        }
+        ?>
+    </select><br><br>
+    
+    <label for="arrival">Arrival:</label>
+    <select name="arrival" required>
+        <?php
+        // Fetch unique arrival locations from the Route table
+        $sql = "SELECT DISTINCT Destination FROM Route";
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<option value='{$row['Destination']}'>{$row['Destination']}</option>";
+            }
+        }
+        ?>
+    </select><br><br>
+    
+    <label for="date">Date:</label>
+    <input type="date" name="date" required><br><br>
+    
+    <input type="submit" value="Search Flights">
+</form>
+
+
     <!-- Add a "Confirm" button to go to the transaction page -->
     <form action="transaction.php" method="GET">
         <input type="submit" name="confirm" value="Confirm">
