@@ -1,5 +1,33 @@
+<?php
+$charged_amount = 0;
+$passenger_id = ""; // Initialize passenger_id to an empty string
+$flight_id = "";
+
+if (isset($_POST['flight_id'])) {
+    // You'll need to replace this with your database connection logic
+    include 'db_connect.php';
+
+    $flight_id = $_POST['flight_id'];
+   
+
+    // Fetch charged amount from the Airfare table based on flight ID and passenger ID
+    $sql_airfare = "SELECT Charged_amount FROM Airfare WHERE Flight_ID = ?";
+    if ($stmt_airfare = $conn->prepare($sql_airfare)) {
+        $stmt_airfare->bind_param("i", $flight_id);
+        $stmt_airfare->execute();
+        $stmt_airfare->bind_result($charged_amount);
+        $stmt_airfare->fetch();
+        $stmt_airfare->close();
+    }
+
+    // Close the database connection
+    $conn->close();
+}
+?>
+
 <!DOCTYPE html>
 <html>
+<head>
 <head>
     <title>Payment Gateway</title>
     <style>
@@ -74,58 +102,15 @@
                 <option value="Paytm">Paytm</option>
                 <!-- Add more transaction types as needed -->
             </select><br>
+        <label for="charged_amount">Charged Amount:</label>
+        <input type="text" name="charged_amount" value="<?php echo $charged_amount; ?>" required readonly><br><br>
 
-            <!-- Departure Date from previous selection -->
-            <label for="departure_date">Departure Date:</label>
-            <input type="text" name="departure_date" value="<?php echo $_POST['date']; ?>" readonly><br>
+        <label for="flight_id">Flight ID:</label>
+        <input type="text" name="flight_id" value="<?php echo $flight_id; ?>" required readonly><br><br>
 
-            <!-- Select Class Dropdown -->
-            <label for="select_class">Select Class:</label>
-            <select name="select_class" id="select_class" required>
-                <option value="Economy">Economy</option>
-                <option value="Business">Business</option>
-                <option value="First class">First class</option>
-            </select><br>
-
-            <!-- Display Charged Amount -->
-            <label for="charged_amount">Charged Amount:</label>
-            <input type="text" name="charged_amount" id="charged_amount" readonly><br>
-
-            <!-- Confirm Payment Button -->
-            <input type="submit" class="confirm-button" value="Confirm Payment">
-        </form>
-    </div>
-
-    <script>
-        // Function to update charged amount based on selected class
-        document.getElementById('select_class').addEventListener('change', function() {
-            var classSelection = this.value;
-            var chargedAmountField = document.getElementById('charged_amount');
-
-            // Set charged amount based on selected class
-            switch(classSelection) {
-                case 'Economy':
-                    chargedAmountField.value = <?php echo $economy_charge; ?>;
-                    break;
-                case 'Business':
-                    chargedAmountField.value = <?php echo $business_charge; ?>;
-                    break;
-                case 'First class':
-                    chargedAmountField.value = <?php echo $first_class_charge; ?>;
-                    break;
-                default:
-                    chargedAmountField.value = '';
-            }
-        });
-    </script>
-
-    <script>
-        // Alert and redirect on form submission
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Transaction Completed!');
-            window.location.href = 'home.php';
-        });
-    </script>
+        <input type="submit" value="Add Transaction">
+    </form>
+    <br>
+    <a href="home.php">Back to Home</a>
 </body>
 </html>
