@@ -1,3 +1,4 @@
+
 <?php
 // Connect to the database (You can include your db_connect.php here)
 include 'db_connect.php';
@@ -17,7 +18,14 @@ $stmt->bind_result($flight_id, $departure, $arrival, $flight_date);
 
 // Display the list of available flights
 while ($stmt->fetch()) {
-    echo "Flight ID: $flight_id, Departure: $departure, Arrival: $arrival, Date: $flight_date<br>";
+    echo "Flight ID: $flight_id, Departure: $departure, Arrival: $arrival, Date: $flight_date ";
+    echo "<form action='transaction.php' method='POST'>";
+    echo "<input type='hidden' name='flight_id' value='$flight_id'>";
+    echo "<input type='hidden' name='departure' value='$departure'>";
+    echo "<input type='hidden' name='arrival' value='$arrival'>";
+    echo "<input type='hidden' name='date' value='$flight_date'>";
+    echo "<input type='submit' name='select' value='Select'>";
+    echo "</form><br>";
 }
 
 // Optionally, provide a link to go back to the reservation page
