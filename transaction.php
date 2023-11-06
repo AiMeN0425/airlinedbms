@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Transaction Page</title>
+    <title>Add New Transaction</title>
 </head>
 <body>
     <h2>Add New Transaction</h2>
+
     <form action="process_transaction.php" method="POST">
+        <!-- Transaction Type Dropdown -->
         <label for="transaction_type">Transaction Type:</label>
         <select name="transaction_type" required>
             <option value="GooglePay">GooglePay</option>
@@ -16,50 +18,56 @@
             <!-- Add more transaction types as needed -->
         </select><br><br>
 
+        <!-- Departure Date from previous selection -->
         <label for="departure_date">Departure Date:</label>
-        <input type="date" name="departure_date" required><br><br>
+        <input type="text" name="departure_date" value="<?php echo $_POST['date']; ?>" readonly><br><br>
 
-        <label for="booking_date">Booking Date:</label>
-        <input type="date" name="booking_date" required><br><br>
+        <!-- Select Class Dropdown -->
+        <label for="select_class">Select Class:</label>
+        <select name="select_class" id="select_class" required>
+            <option value="Economy">Economy</option>
+            <option value="Business">Business</option>
+            <option value="First class">First class</option>
+        </select><br><br>
 
-        <?php
-        // Replace the following code with PHP logic to retrieve data
-        // based on the selected flight from the Reservation table
-        if (isset($_POST['flight_id'])) {
-            // You'll need to replace this with your database connection logic
-            include 'db_connect.php';
-
-            $flight_id = $_POST['flight_id'];
-            
-            // Fetch charged amount from the Airfare table based on flight ID and passenger ID
-            $sql = "SELECT Charged_Amount FROM Airfare WHERE Flight_ID = ? AND Passenger_ID = ?";
-            if ($stmt = $conn->prepare($sql)) {
-                // Replace $passenger_id with the actual passenger ID (e.g., fetched from the login)
-                $passenger_id = 123; // Replace with the actual passenger ID
-                $stmt->bind_param("ii", $flight_id, $passenger_id);
-                $stmt->execute();
-                $stmt->bind_result($charged_amount);
-                $stmt->fetch();
-                $stmt->close();
-            }
-            
-            // Close the database connection
-            $conn->close();
-        }
-        ?>
-
+        <!-- Display Charged Amount -->
         <label for="charged_amount">Charged Amount:</label>
-        <input type="text" name="charged_amount" value="<?php echo $charged_amount; ?>" required readonly><br><br>
+        <input type="text" name="charged_amount" id="charged_amount" readonly><br><br>
 
-        <label for="passenger_id">Passenger ID (First Name):</label>
-        <input type="text" name="passenger_id" value="<?php echo $first_name; ?>" required readonly><br><br>
-
-        <label for="flight_id">Flight ID:</label>
-        <input type="text" name="flight_id" value="<?php echo $flight_id; ?>" required readonly><br><br>
-
-        <input type="submit" value="Add Transaction">
+        <!-- Confirm Payment Button -->
+        <input type="submit" value="Confirm Payment">
     </form>
-    <br>
-    <a href="home.php">Back to Home</a>
+
+    <script>
+        // Function to update charged amount based on selected class
+        document.getElementById('select_class').addEventListener('change', function() {
+            var classSelection = this.value;
+            var chargedAmountField = document.getElementById('charged_amount');
+
+            // Set charged amount based on selected class
+            switch(classSelection) {
+                case 'Economy':
+                    chargedAmountField.value = <?php echo $economy_charge; ?>;
+                    break;
+                case 'Business':
+                    chargedAmountField.value = <?php echo $business_charge; ?>;
+                    break;
+                case 'First class':
+                    chargedAmountField.value = <?php echo $first_class_charge; ?>;
+                    break;
+                default:
+                    chargedAmountField.value = '';
+            }
+        });
+    </script>
+
+    <script>
+        // Alert and redirect on form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Completed!');
+            window.location.href = 'home.php';
+        });
+    </script>
 </body>
 </html>
