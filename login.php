@@ -37,8 +37,8 @@
         }
 
         input[type="submit"], button {
-            width: 48%;
-            padding: 15px;
+            width: 45%;
+            padding: 10px;
             font-size: 20px;
             background-color: #00cc99;
             color: #fff;
