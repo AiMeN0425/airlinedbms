@@ -56,10 +56,17 @@
         .back-link-container {
             background-color: rgba(0, 0, 0, 0.5);
             padding: 10px;
-            text-align: centre;
+            text-align: center;
             border-radius: 10px;
             margin-top: 20px auto;
-            
+        }
+
+        .flight-class {
+            color: #ffcc00; /* Custom color for flight class */
+        }
+        .no-flights{
+            text-align: center;
+            font-size: 20px;
         }
     </style>
 </head>
@@ -76,28 +83,42 @@
     $date = $_POST['date'];
 
     // Query the database for available flights
-    $sql = "SELECT Flight_ID, Departure, Arrival, Flight_date FROM Flight 
+    $sql = "SELECT Flight.Flight_ID, Flight.Departure, Flight.Arrival, Flight.Flight_date, Airfare.Class, Airfare.Charged_amount
+            FROM Flight
+            LEFT JOIN Airfare ON Flight.Flight_ID = Airfare.Flight_ID
             WHERE Departure = ? AND Arrival = ? AND Flight_date = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('sss', $departure, $arrival, $date);
     $stmt->execute();
-    $stmt->bind_result($flight_id, $departure, $arrival, $flight_date);
+    $stmt->bind_result($flight_id, $departure, $arrival, $flight_date, $class, $charged_amount);
+
+    // Check if there are available flights
+    $flightsAvailable = false;
 
     // Display the list of available flights
     while ($stmt->fetch()) {
+        $flightsAvailable = true; // Set to true if there are available flights
         echo "<div class='flight-details'>";
         echo "<p>Flight ID: $flight_id</p>";
         echo "<p>Departure: $departure</p>";
         echo "<p>Arrival: $arrival</p>";
         echo "<p>Date: $flight_date</p>";
+        echo "<p class='flight-class'>Class: $class</p>";
+        echo "<p>Charged Amount: $charged_amount</p>";
         echo "<form action='transaction.php' method='POST'>";
         echo "<input type='hidden' name='flight_id' value='$flight_id'>";
         echo "<input type='hidden' name='departure' value='$departure'>";
-        echo "<input type='hidden' name='arrival' value='$arrival'>";
+        echo "<input type='hidden' name 'arrival' value='$arrival'>";
         echo "<input type='hidden' name='date' value='$flight_date'>";
+        echo "<input type='hidden' name='class' value='$class'>";
+        echo "<input type='hidden' name='charged_amount' value='$charged_amount'>";
         echo "<input type='submit' class='select-button' name='select' value='Select'>";
         echo "</form>";
         echo "</div><br>";
+    }
+
+    if (!$flightsAvailable) {
+        echo "<p class='no-flights'>No available flights for the selected criteria.</p>";
     }
 
     // Optionally, provide a link to go back to the reservation page
