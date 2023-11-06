@@ -13,20 +13,52 @@
             margin: 0;
             color: #333;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .navbar {
+            background-color: #283747;
+            overflow: hidden;
+            position: fixed; /* Set the navbar to fixed position */
+            width: 100%; /* Full width */
+            top: 0; /* Position it at the top of the page */
+        }
+
+        /* Style the navbar links */
+        .navbar a {
+            float: left;
+            font-size: 18px;
+            color: #fff;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        /* Change the color of navbar links on hover */
+        .navbar a:hover {
+            background-color: #00cc99;
+            color: #fff;
         }
 
         .login-box {
             background-color: #f0f0f0;
             border-radius: 10px;
             padding: 20px;
-            margin: 100px auto;
+            width: 100%;
             max-width: 400px;
             opacity: 0.9;
             text-align: left;
         }
 
+        h2 {
+            color: #333;
+        }
+
         label, input[type="text"], input[type="password"] {
-            width: calc(100% - 22px);
+            width: 100%;
             padding: 10px;
             box-sizing: border-box;
             border: 1px solid #ccc;
@@ -37,8 +69,8 @@
         }
 
         input[type="submit"], button {
-            width: 45%;
-            padding: 10px;
+            width: 100%;
+            padding: 15px;
             font-size: 20px;
             background-color: #00cc99;
             color: #fff;
@@ -47,8 +79,7 @@
             border: none;
             cursor: pointer;
             display: inline-block;
-            margin: 0 1%;
-            box-sizing: border-box; /* Added */
+            box-sizing: border-box;
         }
 
         button {
@@ -61,19 +92,27 @@
     </style>
 </head>
 <body>
+<div class="navbar">
+        <a href="home.php">Home</a>
+        <a href="flight.php">View Flights</a>
+        <a href="delete_user.html">Delete User</a>
+        <a href="about_us.php">About Us</a>
+    </div>
     <div class="login-box">
         <h2>Login</h2>
-        <form id="login-form" action="process_login.php" method="POST">
-            <!-- Login form fields (username and password) -->
-            <label for="username">Username:</label>
-            <input type="text" name="username" required><br><br>
+        <form action="process_login.php" method="POST">
+            <label for="username">Username</label>
+            <input type="text" name="username" required>
+            
+            <label for="password">Password</label>
+            <input type="password" name="password" required>
 
-            <label for="password">Password:</label>
-            <input type="password" name="password" required><br><br>
-
+            
             <input type="submit" value="Login">
+            <br></br>
             <a href="registration.html"><button type="button">Register</button></a>
         </form>
     </div>
 </body>
 </html>
+
