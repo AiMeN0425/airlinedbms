@@ -111,7 +111,7 @@
             <input type="submit" value="Login">
             <br></br>
             <a href="registration.html"><button type="button">Register</button></a>
-        </form>
-    </div>
-</body>
+        </form> 
+    </div> 
+</body> 
 </html> 
