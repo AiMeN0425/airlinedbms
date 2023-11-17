@@ -19,39 +19,25 @@ if ($_SESSION['authenticated']) {
         $arrival = $_POST['arrival'];
         $seat_class = $_POST['seat_class'];
 
-        // Query to fetch charged amount from the Airfare table based on flight and seat class
-        $sql = "SELECT Charged_Amount FROM Airfare WHERE Flight_ID = ? AND Seat_Class = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ss', $flight_id, $seat_class);
-        $stmt->execute();
-        $stmt->bind_result($charged_amount);
+        // Add the new transaction data to the database (customize this part as needed)
+        $transaction_type = $_POST['transaction_type'];
+        $departure_date = $_POST['departure_date'];
+        $booking_date = $_POST['booking_date'];
 
-        if ($stmt->fetch()) {
-            // Charged Amount fetched successfully
-            $stmt->close();
+        // Insert this transaction into your transactions table with a nested SELECT
+        $insert_sql = "
+            INSERT INTO Transactions (Transaction_Type, Departure_Date, Booking_Date, Charged_Amount, Passenger_Name, Flight_ID)
+            VALUES (?, ?, ?, (SELECT Charged_Amount FROM Airfare WHERE Flight_ID = ? AND Seat_Class = ?), ?, ?)
+        ";
 
-            // Add the new transaction data to the database (customize this part as needed)
-            $transaction_type = $_POST['transaction_type'];
-            $departure_date = $_POST['departure_date'];
-            $booking_date = $_POST['booking_date'];
+        $insert_stmt = $conn->prepare($insert_sql);
+        $insert_stmt->bind_param('ssssss', $transaction_type, $departure_date, $booking_date, $flight_id, $seat_class, $first_name, $flight_id);
+        $insert_stmt->execute();
+        $insert_stmt->close();
 
-            // Insert this transaction into your transactions table
-            $insert_sql = "INSERT INTO Transactions (Transaction_Type, Departure_Date, Booking_Date, Charged_Amount, Passenger_Name, Flight_ID) VALUES (?, ?, ?, ?, ?, ?)";
-            $insert_stmt = $conn->prepare($insert_sql);
-            $insert_stmt->bind_param('ssssss', $transaction_type, $departure_date, $booking_date, $charged_amount, $first_name, $flight_id);
-            $insert_stmt->execute();
-            $insert_stmt->close();
-
-            // Redirect to a success page or perform other actions
-            header('Location: flight.php');
-            exit();
-        } else {
-            // Failed to fetch Charged Amount
-            $stmt->close();
-
-            // Handle the error or display an error message
-            echo "Failed to fetch Charged Amount.";
-        }
+        // Redirect to a success page or perform other actions
+        header('Location: flight.php');
+        exit();
     } else {
         // Handle missing POST data
         echo "Missing required data.";
@@ -64,4 +50,4 @@ if ($_SESSION['authenticated']) {
     header('Location: login.php');
     exit();
 }
-?>
+?> 
