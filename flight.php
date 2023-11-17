@@ -5,7 +5,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('availablrflights.jpg');
+            background-image: url('availableflights.jpg');
             background-size: cover;
             background-attachment: fixed;
             background-color: #f0f0f0;
@@ -35,6 +35,21 @@
             border-radius: 5px;
             width: 45%;
         }
+        form {
+            margin-top: 10px;
+            text-align: center;
+        }
+        input[type="submit"] {
+            background-color: rgba(0, 64, 133, 0.8);
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: rgba(0, 86, 179, 0.8);
+        }
         a {
             display: block;
             text-align: center;
@@ -57,7 +72,7 @@
     <ul>
         <?php
         // Connect to your database
-        include 'db_connect.php' ;
+        include 'db_connect.php';
 
         // SQL query to fetch flight details from your database
         $sql = "SELECT Flight_ID, Departure, Arrival, Flight_date FROM Flight";
@@ -75,6 +90,44 @@
         $conn->close();
         ?>
     </ul>
+    
+    <!-- Update Form -->
+    <form action='update_flight.php' method='POST'>
+        <label for='flight_select'>Select Flight:</label>
+        <select name='flight_select'>
+            <?php
+            // Connect to your database
+            include 'db_connect.php';
+
+            // SQL query to fetch flight details from your database
+            $sql = "SELECT Flight_ID FROM Flight";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<option value='{$row['Flight_ID']}'>{$row['Flight_ID']}</option>";
+                }
+            } else {
+                echo "<option value=''>No flights available</option>";
+            }
+
+            // Close the database connection
+            $conn->close();
+            ?>
+        </select>
+
+        <label for='new_departure'>Departure:</label>
+        <input type='text' name='new_departure' required>
+
+        <label for='new_arrival'>Arrival:</label>
+        <input type='text' name='new_arrival' required>
+
+        <label for='new_date'>New Date:</label>
+        <input type='date' name='new_date' required>
+
+        <input type='submit' value='Update'>
+    </form>
+
     <a href="home.php">Back to Home</a>
 </body>
 </html>
