@@ -116,18 +116,23 @@
             ?>
         </select>
 
-        <label for='new_departure'>Departure:</label>
-        <input type='text' name='new_departure' required>
+        <h2>Update Flight</h2>
 
-        <label for='new_arrival'>Arrival:</label>
-        <input type='text' name='new_arrival' required>
+        <label for="flight_id">Flight ID:</label>
+        <input type="text" name="flight_id" required><br>
 
-        <label for='new_date'>New Date:</label>
-        <input type='date' name='new_date' required>
+        <label for="new_departure">Departure:</label>
+        <input type="text" name="new_departure" required><br>
 
-        <input type='submit' value='Update'>
+        <label for="new_arrival">Arrival:</label>
+        <input type="text" name="new_arrival" required><br>
+
+        <label for="new_date">Date:</label>
+        <input type="text" name="new_date" required><br>
+
+        <input type="submit" name="update" value="Update Flight">
     </form>
 
     <a href="home.php">Back to Home</a>
 </body>
-</html>
+</html> 
