@@ -6,7 +6,7 @@ create table Route( Route_ID int NOT NULL auto_increment primary key, Departure 
 
 CREATE TABLE Flight (Flight_ID varchar(50) PRIMARY KEY, Departure varchar(50),Arrival varchar(50),Flight_date DATE,Route_ID INT,FOREIGN KEY (Route_ID) REFERENCES Route(Route_ID));
 
-CREATE TABLE Airfare (Fare_ID INT NOT NULL auto_increment PRIMARY KEY,Class varchar(50),Charged_amount decimal(8,2),Description varchar(50),Flight_ID varchar (50),FOREIGN KEY (Flight_ID) REFERENCES Flight (Flight_ID));
+CREATE TABLE Airfare (Fare_ID INT NOT NULL auto_increment PRIMARY KEY,Class varchar(50),Charged_amount decimal(8,2),Description varchar(50),Flight_ID varchar (50),FOREIGN KEY (Flight_ID) REFERENCES Flight (Flight_ID) on UPDATE cascade);
 ALTER TABLE Airfare
 ADD INDEX (Charged_amount);
 
@@ -288,59 +288,59 @@ VALUES
     ('COK', 'Cochin International Airport', 'Kerala', 'Kochi', 91),
     ('AMD', 'Sardar Vallabhbhai Patel International Airport', 'Gujarat', 'Ahmedabad', 91);
 select * from Airport;
--- INSERT INTO can_land (Air_code, Flight_ID)
--- VALUES
---     ('LHR', '1'),
---     ('CDG', '2'),
---     ('PEK', '3'),
---     ('NRT', '4'),
---     ('SVO', '5'),
---     ('FRA', '6'),
---     ('SIN', '7'),
---     ('ICN', '8'),
---     ('CCU', '9'),
---     ('MAA', '10'),
---     ('JFK', '11'),  -- New entry with Flight_ID '11'
---     ('LAX', '12'),  -- New entry with Flight_ID '12'
---     ('ORD', '13'),  -- New entry with Flight_ID '13'
---     ('MUC', '14'),  -- New entry with Flight_ID '14'
---     ('DXB', '15'),  -- New entry with Flight_ID '15'
---     ('HKG', '16'),
---     ('HKG', '17');  -- New entry with Flight_ID '16'
+INSERT INTO can_land (Air_code, Flight_ID) VALUES ('LHR', '1');
+ INSERT INTO can_land (Air_code, Flight_ID) VALUES    ('CDG', '2');
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('PEK', '3');
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('NRT', '4');
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('SVO', '5');
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('FRA', '6');
+   INSERT INTO can_land (Air_code, Flight_ID) VALUES  ('SIN', '7');
+   INSERT INTO can_land (Air_code, Flight_ID) VALUES  ('ICN', '8');
+   INSERT INTO can_land (Air_code, Flight_ID) VALUES  ('CCU', '9');
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('MAA', '10');
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('JFK', '11');
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('LAX', '12'); 
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('ORD', '13'); 
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('MUC', '14');  
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('DXB', '15');  
+  INSERT INTO can_land (Air_code, Flight_ID) VALUES   ('HKG', '16');
+   INSERT INTO can_land (Air_code, Flight_ID) VALUES  ('HKG', '17');  -- New entry with Flight_ID '16'
 
 -- Insert sequential Flight_ID values from 1 to 16 in the travels_on table
-INSERT INTO travels_on (Route_ID, Flight_ID)
-VALUES
-    (168806, '1'),
-    (157306, '2'),
-    (178916, '3'),
-    (324567, '4'),
-    (452368, '5'),
-    (894521, '6'),
-    (578425, '7'),
-    (421523, '8'),
-    (789456, '9'),
-    (632147, '10'),
-    (254789, '11'),  -- New entry with Flight_ID '11'
-    (365214, '12'),  -- New entry with Flight_ID '12'
-    (874123, '13'),  -- New entry with Flight_ID '13'
-    (985632, '14'),  -- New entry with Flight_ID '14'
-    (326598, '15'),  -- New entry with Flight_ID '15'
-    (124789, '16'),
-    (365264, '17');  -- New entry with Flight_ID '16'
+INSERT INTO travels_on (Route_ID, Flight_ID) VALUES (168806, '1');
+INSERT INTO travels_on (Route_ID, Flight_ID)VALUES    (157306, '2');
+   INSERT INTO travels_on (Route_ID, Flight_ID)VALUES (178916, '3');
+   INSERT INTO travels_on (Route_ID, Flight_ID)VALUES (324567, '4');
+   INSERT INTO travels_on (Route_ID, Flight_ID)VALUES (452368, '5');
+    INSERT INTO travels_on (Route_ID, Flight_ID)VALUES(894521, '6');
+    INSERT INTO travels_on (Route_ID, Flight_ID)values(578425, '7');
+  INSERT INTO travels_on (Route_ID, Flight_ID)VALUES  (421523, '8');
+   INSERT INTO travels_on (Route_ID, Flight_ID)VALUES (789456, '9');
+  INSERT INTO travels_on (Route_ID, Flight_ID)VALUES  (632147, '10');
+  INSERT INTO travels_on (Route_ID, Flight_ID)VALUES  (254789, '11');  -- New entry with Flight_ID '11'
+  INSERT INTO travels_on (Route_ID, Flight_ID)VALUES  (365214, '12');  -- New entry with Flight_ID '12'
+   INSERT INTO travels_on (Route_ID, Flight_ID)VALUES (874123, '13');  -- New entry with Flight_ID '13'
+   INSERT INTO travels_on (Route_ID, Flight_ID)VALUES (985632, '14');  -- New entry with Flight_ID '14'
+   INSERT INTO travels_on (Route_ID, Flight_ID)VALUES (326598, '15');  -- New entry with Flight_ID '15'
+  INSERT INTO travels_on (Route_ID, Flight_ID)VALUES  (124789, '16');
+  INSERT INTO travels_on (Route_ID, Flight_ID)VALUES  (365264, '17');  -- New entry with Flight_ID '16'
 
 select * from travels_on;
 INSERT INTO Passenger_contact (P_ID, Contact)
 VALUES
     (1, 987654321),
     (2, 123456789),
-    (3, 555123456),
-    (4, 777888999),
-    (5, 555777888),
-    (6, 999888777),
-    (7, 111222333),
-    (8, 222111555),
-    (9, 333444666),
-    (10, 444555666);
+
 
 select *  from Passenger_contact;
+
+
+-- DELIMITER $$
+
+-- CREATE PROCEDURE UpdateFlightDates(IN newDate DATE)
+-- BEGIN
+--     UPDATE Flight
+--     SET Flight_date = DATE_ADD(newDate, INTERVAL 1 DAY);
+-- END $$
+
+-- DELIMITER ;
