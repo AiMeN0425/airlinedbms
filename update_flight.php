@@ -50,4 +50,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 } else {
     echo '<script>alert("Invalid request. Please submit the form.");</script>';
 }
+
+// SQL code for creating the trigger
+$triggerSql = "
+    DELIMITER //
+
+    CREATE TRIGGER after_flight_update
+    AFTER UPDATE ON Flight
+    FOR EACH ROW
+    BEGIN
+        -- Update the Flight table with the new values
+        UPDATE Flight
+        SET Departure = NEW.Departure,
+            Arrival = NEW.Arrival,
+            Flight_date = NEW.Flight_date
+        WHERE Flight_ID = NEW.Flight_ID;
+    END;
+    //
+
+    DELIMITER ;
+";
+
+// Execute the SQL code
+if ($conn->multi_query($triggerSql)) {
+    echo "Trigger created successfully.";
+} else {
+    echo "Error creating trigger: " . $conn->error;
+}
 ?> 
