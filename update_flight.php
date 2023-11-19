@@ -54,7 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // SQL code for creating the trigger
 $triggerSql = "
     DELIMITER //
-
     CREATE TRIGGER after_flight_update
     AFTER UPDATE ON Flight
     FOR EACH ROW
@@ -67,10 +66,8 @@ $triggerSql = "
         WHERE Flight_ID = NEW.Flight_ID;
     END;
     //
-
     DELIMITER ;
 ";
-
 // Execute the SQL code
 if ($conn->multi_query($triggerSql)) {
     echo "Trigger created successfully.";
